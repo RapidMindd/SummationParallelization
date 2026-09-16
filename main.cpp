@@ -57,12 +57,12 @@ int main(int argc, char* argv[])
   if (thread_count <= 0) {
     return 1;
   }
+  Clicker cl;
   auto data = generate();
   //std::this_thread::sleep_for(std::chrono::seconds(10));
   std::vector< std::future< size_t > > threads;
   size_t step = quantity / thread_count;
   size_t remainder = quantity % thread_count;
-  Clicker cl;
   double start = cl.millisec();
   int i = 0;
   for (; i < thread_count - 1; ++i) {
@@ -70,11 +70,10 @@ int main(int argc, char* argv[])
   }
   threads.push_back(
       std::async(std::launch::async, summator, std::ref(data), step * i, step + remainder));
-  size_t sum = 0;
+  [[maybe_unused]] size_t sum = 0;
   for (auto& thread: threads) {
     sum += thread.get();
   }
   double end = cl.millisec();
-  std::cout << end - start << "\n";
-  std::cout << sum << "\n";
+  std::cout << end - start << " " << start << "\n";
 }
